@@ -21,7 +21,7 @@ const FileUploader = () => {
 
         axios({
             method: "POST",
-            url: "http://localhost:8000/upload/coli-server/testfolder",
+            url: "http://54.180.89.89:8000/upload/coli-server/testfolder",
             data: formData,
             headers: {
                 "Content-Type": "multipart/form-data"
