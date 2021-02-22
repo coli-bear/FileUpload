@@ -4,4 +4,4 @@ router = APIRouter()
 
 @router.post("/")
 def aws_auth(token: str):
-    return {"token":str}
+    return {"token":token}

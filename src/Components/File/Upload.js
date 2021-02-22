@@ -14,11 +14,16 @@ const FileUploader = () => {
 
     const onClick = () => {
         const formData = new FormData();
+        formData.append('token', '12345')
         axios ({
-            url:'http://54.180.89.89:8000/aws_auth/',
+            url:'http://localhost:8000/aws_auth/',
+            // url:'http://54.180.89.89:8000/aws_auth/',
             method:'post',
             headers: {
                 "Content-Type": "multipart/form-data"
+            },
+            data: {
+                token:'1234'
             }
         });
         setUploadFiles({});

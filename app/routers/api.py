@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-
+from fastapi.middleware.cors import CORSMiddleware
 from app.routers import buckets, upload, aws_auth
 
 api_router = APIRouter()
