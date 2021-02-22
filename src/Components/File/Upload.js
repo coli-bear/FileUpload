@@ -14,18 +14,20 @@ const FileUploader = () => {
 
     const onClick = () => {
         const formData = new FormData();
-        formData.append('token', '12345')
-        axios ({
-            url:'http://localhost:8000/aws_auth/',
-            // url:'http://54.180.89.89:8000/aws_auth/',
-            method:'post',
+
+        for(const [_, value] of Object.entries(uploadFiles)) {
+            formData.append('files', value);
+        }
+
+        axios({
+            method: "POST",
+            url: "http://localhost:8000/upload/coli-server/testfolder",
+            data: formData,
             headers: {
                 "Content-Type": "multipart/form-data"
-            },
-            data: {
-                token:'1234'
             }
         });
+
         setUploadFiles({});
         setFileList(new Array());
     }
