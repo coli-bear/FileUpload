@@ -9,6 +9,11 @@
     <file type="web" url="file://$PROJECT_DIR$/../second-ui" />
     <file type="web" url="file://$PROJECT_DIR$/../third-ui" />
   </component>
+  <component name="ProjectPlainTextFileTypeManager">
+    <file url="file://$PROJECT_DIR$/src/components/login/Login.js" />
+    <file url="file://$PROJECT_DIR$/src/components/login/Login.scss" />
+    <file url="file://$PROJECT_DIR$/src/components/login/LoginInput.js" />
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
