@@ -6,8 +6,8 @@ function App() {
       <div>
         <div className="container" style={{width: "600px"}}>
           <div>
-            <h3>Coli Server File Uploader</h3>
-            <h4>React File upload</h4>
+            <h3>File Uploader</h3>
+            <h4>Coli-server bucket</h4>
             <UploadFiles/>
           </div>
         </div>

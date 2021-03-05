@@ -1,19 +1,39 @@
 import React, {useState, useEffect, useCallback, useRef} from "react";
 import UploadService from "services/file/FileUploadService";
+import FileUploadList from "./FileUploadList";
+import FileUploadSelect from "./FileUploadSelect";
+import FileUploadProgress from "./FileUploadProgress";
+import FileUploadMessage from "./FileUploadMessage";
+
 
 const UploadFiles = () => {
-  const [selectedFiles, setSelectedFiles] = useState(undefined);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const [progressInfos, setProgressInfos] = useState({val: []});
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState([]);
   const [fileInfos, setFileInfos] = useState([]);
+  
+  const [nextId, setNextId] = useState(0);
   
   const progressInfosRef = useRef();
   
-  
-  const handleSelectFiles = e => {
-    setSelectedFiles(e.target.files);
-    setProgressInfos({val: []});
-  }
+  const handleSelectFiles = useCallback(e => {
+      let selectFiles = e.target.files;
+      let nextFileInfos = [];
+      let nextSelectedFiles = [];
+      let id = nextId;
+      for (const [_, value] of Object.entries(selectFiles)) {
+        const fileName = value.name;
+        if (fileInfos.indexOf(fileName) === -1) {
+          nextSelectedFiles = nextSelectedFiles.concat(value);
+          nextFileInfos = nextFileInfos.concat(fileName);
+        }
+      }
+      setSelectedFiles(selectedFiles.concat(nextSelectedFiles));
+      setFileInfos(fileInfos.concat(nextFileInfos));
+      setProgressInfos({val: []});
+    }
+    , [fileInfos, selectedFiles, nextId]
+  )
   
   const handleUploadFiles = useCallback(() => {
     const files = Array.from(selectedFiles);
@@ -32,13 +52,14 @@ const UploadFiles = () => {
     
     Promise.all(uploadPromises)
       .then(() => UploadService.getFiles())
-      .then(file => {
+      .then(files => {
+        console.log(files)
         setFileInfos(files.data);
       });
     
     setMessage([]);
     
-  });
+  }, [selectedFiles]);
   
   const handleUpload = useCallback((idx, file) => {
     let _progressInfos = [...progressInfosRef.current.val];
@@ -63,74 +84,29 @@ const UploadFiles = () => {
           "Could not upload the file: " + file.name
         ]));
       })
-  })
+  }, [])
   
-  useEffect(() => {
-    UploadService.getFiles().then(res => {
-      setFileInfos(res.data);
-    });
-  }, []);
+  // useEffect(() => {
+  //   UploadService.getFiles().then(res => {
+  //     setFileInfos(res.data);
+  //   });
+  // }, []);
   
   return (
     <div>
       {progressInfos && progressInfos.val.length > 0 &&
       progressInfos.val.map((progressInfo, idx) => (
-        <div className="mb-2" key={idx}>
-          <span>{progressInfo.fileName}</span>
-          <div className="progress">
-            <div
-              className="progress-bar progress-bar-info"
-              role="progressbar"
-              aria-valuenow={progressInfo.percentage}
-              aria-valuemax="100"
-              aria-valuemin="0"
-              style={{width: progressInfo.percentage + "%"}}
-            >
-              {progressInfo.percentage} %
-            </div>
-          </div>
-        </div>
+        <FileUploadProgress idx={idx} progressInfo={progressInfo}/>
       ))}
-      
-      <div className="row my-3">
-        <div className="col-8">
-          <label className="btn btn-default p-0">
-            <input type="file" multiple onChange={handleSelectFiles}/>
-          </label>
-        </div>
-        
-        <div className="col-4">
-          <button
-            className="btn btn-success btn-sm"
-            disabled={!selectedFiles}
-            onClick={handleUploadFiles}
-          >
-            Upload
-          </button>
-        </div>
-      </div>
-      
+      <FileUploadSelect
+        selectedFiles={selectedFiles}
+        handleSelectFiles={handleSelectFiles}
+        handleUploadFiles={handleUploadFiles}
+      />
       {message.length > 0 && (
-        <div className="alert alert-secondary" role="alert">
-          <ul>
-            {message.map((item, i) => <li key={i}>{item}</li>)}
-          </ul>
-        </div>
+        <FileUploadMessage message={message}/>
       )}
-      
-      <div className="card">
-        <div className="card-header">List of Files</div>
-        <ul className="list-group list-group-flush">
-          {fileInfos &&
-            fileInfos.map((file, idx) => (
-              <li className="list-group-item" key={idx}>
-                <a href={file.url}>file.name</a>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-      
+      <FileUploadList fileInfos={fileInfos}/>
     </div>
   );
 };
