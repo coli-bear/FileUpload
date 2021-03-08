@@ -50,18 +50,18 @@ const UploadFiles = () => {
     
     const uploadPromises = files.map((files, index) => handleUpload(index, files));
     
-    Promise.all(uploadPromises)
-      .then(() => UploadService.getFiles())
-      .then(files => {
-        console.log(files)
-        setFileInfos(files.data);
-      });
+    Promise.all(uploadPromises);
+      // .then(() => UploadService.getFiles())
+      // .then(files => {
+      //   console.log(files)
+      //   setFileInfos(files.data);
+      // });
     
     setMessage([]);
     
   }, [selectedFiles]);
   
-  const handleUpload = useCallback((idx, file) => {
+  const handleUpload = (idx, file) => {
     let _progressInfos = [...progressInfosRef.current.val];
     return UploadService.upload(file, e => {
       _progressInfos[idx].percentage = Math.round(
@@ -84,7 +84,7 @@ const UploadFiles = () => {
           "Could not upload the file: " + file.name
         ]));
       })
-  }, [])
+  };
   
   // useEffect(() => {
   //   UploadService.getFiles().then(res => {

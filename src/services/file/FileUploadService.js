@@ -6,12 +6,17 @@ const getFormData = obj => Object.keys(obj).reduce((formData, key) => {
 }, new FormData);
 
 const upload = (file, onUploadProgress) => {
-  return http.post("/upload/coli-server/testfolder", getFormData(file), {
-    headers: {
-      "Content-Type": "multipart/form-data"
-    },
-    onUploadProgress
-  });
+  const formData = new FormData() ;
+  formData.append('file', file);
+  return http.post("/upload/coli-server/testfolder",
+    // getFormData(file),
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      },
+      onUploadProgress
+    });
 };
 
 const getFiles = () => {

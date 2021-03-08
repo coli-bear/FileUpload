@@ -10,27 +10,28 @@ from typing import List
 
 router = APIRouter()
 
+
 @router.post("/{bucket}/{folder}")
 def upload_file(
-    bucket:str,
-    folder:str,  
-    files: List[UploadFile]=File(...),
-    s3: BaseClient=Depends(s3_auth)): 
+  bucket: str,
+  folder: str,
+  file: UploadFile=File(...),
+  # files: List[UploadFile]=File(...),
+  s3: BaseClient = Depends(s3_auth)):
+  upload_obj = upload_file_to_bucket(
+    s3=s3,
+    file=file,
+    bucket=bucket,
+    folder=folder
+  )
 
-    upload_obj = upload_file_to_bucket(
-        s3=s3, 
-        files=files,
-        bucket=bucket,
-        folder=folder
+  if upload_obj:
+    return JSONResponse(
+      content=f"AWS:S3:Upload processing of {bucket}/{folder} complete",
+      status_code=status.HTTP_201_CREATED
     )
-
-    if upload_obj:
-        return JSONResponse(
-            content=f"AWS:S3:Upload processing of {bucket}/{folder} complete", 
-            status_code=status.HTTP_201_CREATED
-        )
-    else:
-        return JSONResponse(
-            content=f"AWS:S3:Upload processing failed", 
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+  else:
+    return JSONResponse(
+      content=f"AWS:S3:Upload processing failed",
+      status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+    )
